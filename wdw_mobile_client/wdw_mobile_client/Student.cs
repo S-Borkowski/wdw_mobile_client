@@ -4,9 +4,9 @@ using System.Text;
 
 namespace wdw_mobile_client
 {
-    class Student
+    public class Student
     {
         public string token { get; set; }
-        public int id { get; set; }
+        public int idUser { get; set; }
     }
 }

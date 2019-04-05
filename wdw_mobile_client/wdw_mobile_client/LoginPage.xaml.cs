@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,6 +14,7 @@ namespace wdw_mobile_client
 	{
         private bool isConnected = false;
         private HttpClient _client;
+        public Student student;
 
 
         public LoginPage ()
@@ -35,12 +32,11 @@ namespace wdw_mobile_client
             string pass = "developer";//password.Text;
 
             string jsonString = $"{{ \"username\":\"{id}\", \"password\":\"{pass}\" }}";
-            dynamic json = JsonConvert.DeserializeObject(jsonString);
 
             if (isConnected) {
                 loginBtn.IsEnabled = false;
                 getToken(jsonString);
-                App.Current.MainPage = new LectureListPage();
+                App.Current.MainPage = new LectureListPage(student);
                 loginBtn.IsEnabled = true;
             }
             else
@@ -59,7 +55,7 @@ namespace wdw_mobile_client
             }
             catch(HttpRequestException e)
             {
-                Console.WriteLine("No connection!");
+                Console.WriteLine("No connection! \n" + e);
             }
         }
 
@@ -67,10 +63,10 @@ namespace wdw_mobile_client
         {
             var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
             dynamic response = _client.PostAsync("http://apiwdw.azurewebsites.net/login_check", stringContent).Result;
-            Console.WriteLine("Those are the lectures1: " + response);
-            dynamic lecturesString = JsonConvert.DeserializeObject(response);
-            Console.WriteLine("Those are the lectures2: ");
-            Console.WriteLine(lecturesString);
+            Console.WriteLine("This is the response: " + response.Content.ReadAsStringAsync().Result);
+            dynamic responseJson = response.Content.ReadAsStringAsync().Result;
+            student = JsonConvert.DeserializeObject<Student>(responseJson);
+            Console.WriteLine("This is the token: " + student.token);
         }
     }
 }

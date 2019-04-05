@@ -1,13 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
 
 namespace wdw_mobile_client
@@ -18,13 +15,14 @@ namespace wdw_mobile_client
         private ListView listView;
         private List<Lecture> lectures;
         private ActivityIndicator activityIndicator;
-        private WebClient webClient;
+        private HttpClient httpClient;
         private Uri url;
-        private string[] list;
+        private Student student;
 
-        public LectureListPage()
+        public LectureListPage(Student stud)
         {
             InitializeComponent();
+            student = stud;
         }
 
         protected override void OnAppearing()
@@ -33,53 +31,26 @@ namespace wdw_mobile_client
             listView = LecturesList;
             activityIndicator = indicator;
 
-            list = new string[25];
+            httpClient = new HttpClient();
+            url = new Uri("http://apiwdw.azurewebsites.net/lectures");
+            httpClient.DefaultRequestHeaders.Authorization  = new AuthenticationHeaderValue("Bearer", student.token);
 
-            wait();
-
-            webClient = new WebClient();
-            /*
-            url = new Uri("https://support.oneskyapp.com/hc/en-us/article_attachments/202761627/example_1.json");
-
-            webClient.DownloadDataAsync(url);
-            webClient.DownloadDataCompleted += WebClient_DownloadDataCompleted;
+            downloadData();
         }
 
-
-        private void WebClient_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
+        public async void downloadData()
         {
-            string json = Encoding.UTF8.GetString(e.Result);
-            lectures = JsonConvert.DeserializeObject<List<Lecture>>(json);
-            indicator.IsRunning = false;
-            */
-        }
-        public async void wait()
-        {
-            list[0] = "pierwszy";
-            await Task.Delay(2000);
-            listView.ItemsSource = list;
+            dynamic json = httpClient.GetAsync(url).Result;
+            Console.WriteLine(json.Content.ReadAsStringAsync().Result);
+            dynamic lecturesJson = json.Content.ReadAsStringAsync().Result;
+            lectures = JsonConvert.DeserializeObject<List<Lecture>>(lecturesJson);
+            listView.ItemsSource = lectures;
             indicator.IsRunning = false;
         }
 
-        private void LecturesList_ItemTapped(object sender, ItemTappedEventArgs e)
+        private void ViewCell_Tapped(object sender, EventArgs e)
         {
-            string a = e.ToString();
-            DisplayAlert("Alert", a, "OK");
+            DisplayAlert("Test", e.ToString(), "OK");
         }
-    }
-    public class Cell
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-
-        public string GETNAME
-        {
-            get { return String.Format("{0}", name); }
-        }
-        public string GETID
-        {
-            get { return String.Format("{0}", id); }
-        }
-
     }
 }
