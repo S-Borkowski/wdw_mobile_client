@@ -30,7 +30,6 @@ namespace wdw_mobile_client
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            //DisplayAlert("Alert", "You have been alerted", "OK");
             listView = LecturesList;
             activityIndicator = indicator;
 
