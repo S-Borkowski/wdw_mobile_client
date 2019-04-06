@@ -4,6 +4,11 @@
              x:Class="wdw_mobile_client.LoginPage">
     <ContentPage.Content>
         <StackLayout VerticalOptions="CenterAndExpand">
+            <StackLayout  RelativeLayout.WidthConstraint= "{ConstraintExpression Type=RelativeToParent,Property=Width}" Orientation="Horizontal" HorizontalOptions="CenterAndExpand" 
+                      RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width, Factor=0, Constant=0}" 
+                      RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height, Factor=0.45, Constant=0}">
+                <ActivityIndicator x:Name="indicator" IsRunning="False"/>
+            </StackLayout>
             <Entry x:Name="student_id" Placeholder="Nr. indeksu" />
             <Entry x:Name="password" IsPassword="True" Placeholder="Hasło" />
             <Button x:Name="loginBtn" Text="Zaloguj" Clicked="LoginBtn_Clicked" />

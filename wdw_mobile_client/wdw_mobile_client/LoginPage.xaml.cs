@@ -15,19 +15,31 @@ namespace wdw_mobile_client
         private bool isConnected = false;
         private HttpClient _client;
         public Student student;
+        private ActivityIndicator activityIndicator;
 
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+        }
 
         public LoginPage ()
 		{
 			InitializeComponent ();
-
             _client = new HttpClient();
-
-            hasConnection();
         }
 
-        private void LoginBtn_Clicked(object sender, EventArgs e)
+        protected override async void OnAppearing()
         {
+            base.OnAppearing();
+
+            await hasConnection();
+
+            activityIndicator = indicator;
+        }
+
+        private async void LoginBtn_Clicked(object sender, EventArgs e)
+        {
+            indicator.IsRunning = true;
             string id = "developer";//student_id.Text;
             string pass = "developer";//password.Text;
 
@@ -35,13 +47,14 @@ namespace wdw_mobile_client
 
             if (isConnected) {
                 loginBtn.IsEnabled = false;
-                getToken(jsonString);
-                App.Current.MainPage = new LectureListPage(student);
-                loginBtn.IsEnabled = true;
+                student_id.IsEnabled = false;
+                password.IsEnabled = false;
+                await getToken(jsonString);
+                await Navigation.PushModalAsync(new LectureListPage(student));
             }
             else
             {
-                DisplayAlert("Alert", "No connection to internet", "OK");
+                await DisplayAlert("Alert", "No connection to internet", "OK");
             }
         }
 
@@ -62,11 +75,10 @@ namespace wdw_mobile_client
         public async Task getToken(dynamic jsonString)
         {
             var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-            dynamic response = _client.PostAsync("http://apiwdw.azurewebsites.net/login_check", stringContent).Result;
-            Console.WriteLine("This is the response: " + response.Content.ReadAsStringAsync().Result);
-            dynamic responseJson = response.Content.ReadAsStringAsync().Result;
+            HttpResponseMessage response = await _client.PostAsync("http://apiwdw.azurewebsites.net/login_check", stringContent);
+            string responseJson = await response.Content.ReadAsStringAsync();
             student = JsonConvert.DeserializeObject<Student>(responseJson);
-            Console.WriteLine("This is the token: " + student.token);
+            //Console.WriteLine("This is the token: " + student.token);
         }
     }
 }

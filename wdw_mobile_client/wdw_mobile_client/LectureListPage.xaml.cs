@@ -16,23 +16,24 @@ namespace wdw_mobile_client
         private List<Lecture> lectures;
         private ActivityIndicator activityIndicator;
         private HttpClient httpClient;
-        private Uri url;
         private Student student;
 
         public LectureListPage(Student stud)
         {
             InitializeComponent();
             student = stud;
+            activityIndicator = downloadIndicator;
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
+            Navigation.PopModalAsync();
+            activityIndicator.IsRunning = true;
+
             listView = LecturesList;
-            activityIndicator = indicator;
 
             httpClient = new HttpClient();
-            url = new Uri("http://apiwdw.azurewebsites.net/lectures");
             httpClient.DefaultRequestHeaders.Authorization  = new AuthenticationHeaderValue("Bearer", student.token);
 
             downloadData();
@@ -40,17 +41,18 @@ namespace wdw_mobile_client
 
         public async void downloadData()
         {
-            dynamic json = httpClient.GetAsync(url).Result;
-            Console.WriteLine(json.Content.ReadAsStringAsync().Result);
-            dynamic lecturesJson = json.Content.ReadAsStringAsync().Result;
+            HttpResponseMessage json = await httpClient.GetAsync("http://apiwdw.azurewebsites.net/lectures");
+            string lecturesJson = await json.Content.ReadAsStringAsync();
             lectures = JsonConvert.DeserializeObject<List<Lecture>>(lecturesJson);
             listView.ItemsSource = lectures;
-            indicator.IsRunning = false;
+            //downloadIndicator.IsRunning = false;
         }
 
-        private void ViewCell_Tapped(object sender, EventArgs e)
+        private async void LecturesList_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            DisplayAlert("Test", e.ToString(), "OK");
+            Lecture lecture = (Lecture) e.Item;
+            //await Navigation.PushAsync(new LecturePage(lecture));
+            await DisplayAlert("Test", lecture.name, "OK");
         }
     }
 }

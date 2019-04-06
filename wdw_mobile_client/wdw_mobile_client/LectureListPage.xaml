@@ -6,13 +6,13 @@
         <StackLayout  RelativeLayout.WidthConstraint= "{ConstraintExpression Type=RelativeToParent,Property=Width}" Orientation="Horizontal" HorizontalOptions="CenterAndExpand" 
                       RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width, Factor=0, Constant=0}" 
                       RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height, Factor=0.45, Constant=0}">
-            <ActivityIndicator x:Name="indicator" IsRunning="True"/>
+            <ActivityIndicator x:Name="downloadIndicator" IsRunning="False"/>
         </StackLayout>
-        <ListView x:Name="LecturesList" SelectionMode="None" RowHeight="80">
+        <ListView x:Name="LecturesList" SelectionMode="None" RowHeight="80" ItemTapped="LecturesList_ItemTapped" Footer="" BackgroundColor="White">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <ViewCell Tapped="ViewCell_Tapped">
-                        <Grid BackgroundColor="Black" ColumnSpacing="1" RowSpacing="1">
+                    <ViewCell>
+                        <Grid BackgroundColor="Black" ColumnSpacing="1" RowSpacing="1" Margin="5, 5, 5, 5" Padding="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="25*"/>
                                 <ColumnDefinition Width="25*"/>
@@ -27,26 +27,66 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             
-                            <Label BackgroundColor="Wheat" Grid.ColumnSpan="5" Grid.Row="0" 
-                                   Text="{Binding name}" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                            
-                            <Label BackgroundColor="Wheat" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" 
-                                   Text="{Binding ects, StringFormat='ECTS: {0:F0}'}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                            
-                            <Label BackgroundColor="Wheat" Grid.Column="1" Grid.Row="1" 
-                                   Text="{Binding week}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                            
-                            <Label BackgroundColor="Wheat" Grid.Column="1" Grid.Row="2" 
-                                   Text="{Binding weekday}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
-                            
-                            <Label BackgroundColor="Wheat" Grid.Column="2" Grid.Row="1" Grid.RowSpan="2" 
-                                   Text="{Binding hour}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            <Label
+                                BackgroundColor="LightBlue" 
+                                Grid.ColumnSpan="5"
+                                Grid.Row="0" 
+                                Text="{Binding name}" 
+                                FontAttributes="Bold" 
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center"/>
 
-                            <Label BackgroundColor="Wheat" Grid.Column="3" Grid.Row="1" Grid.RowSpan="2" 
-                                   Text="{Binding slotsOccupied}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            <Label
+                                BackgroundColor="White" 
+                                Grid.Column="0" 
+                                Grid.Row="1" 
+                                Grid.RowSpan="2" 
+                                Text="{Binding ects, StringFormat='ECTS: {0:F0}'}" 
+                                HorizontalTextAlignment="Center" 
+                                VerticalTextAlignment="Center"/>
 
-                            <Label BackgroundColor="Wheat" Grid.Column="4" Grid.Row="1" Grid.RowSpan="2" 
-                                   Text="{Binding slots}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                            <Label
+                                   BackgroundColor="White" 
+                                   Grid.Column="1" 
+                                   Grid.Row="1" 
+                                   Text="{Binding week}" 
+                                   HorizontalTextAlignment="Center" 
+                                   VerticalTextAlignment="Center"/>
+
+                            <Label
+                                   BackgroundColor="White" 
+                                   Grid.Column="1" 
+                                   Grid.Row="2" 
+                                   Text="{Binding weekday}" 
+                                   HorizontalTextAlignment="Center" 
+                                   VerticalTextAlignment="Center"/>
+
+                            <Label 
+                                   BackgroundColor="White" 
+                                   Grid.Column="2" 
+                                   Grid.Row="1" 
+                                   Grid.RowSpan="2" 
+                                   Text="{Binding hour}" 
+                                   HorizontalTextAlignment="Center" 
+                                   VerticalTextAlignment="Center"/>
+
+                            <Label
+                                   BackgroundColor="White" 
+                                   Grid.Column="3" 
+                                   Grid.Row="1" 
+                                   Grid.RowSpan="2" 
+                                   Text="{Binding freeSlots}" 
+                                   HorizontalTextAlignment="Center" 
+                                   VerticalTextAlignment="Center"/>
+
+                            <Label 
+                                   BackgroundColor="White" 
+                                   Grid.Column="4" 
+                                   Grid.Row="1"
+                                   Grid.RowSpan="2" 
+                                   Text="{Binding slots}"
+                                   HorizontalTextAlignment="Center" 
+                                   VerticalTextAlignment="Center"/>
                         </Grid>
                     </ViewCell>
                 </DataTemplate>

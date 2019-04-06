@@ -15,5 +15,12 @@ namespace wdw_mobile_client
         public string hour { get; set; }
         public int slots { get; set; }
         public int slotsOccupied { get; set; }
+        public int freeSlots
+        {
+            get
+            {
+                return slots - slotsOccupied;
+            }
+        }
     }
 }
