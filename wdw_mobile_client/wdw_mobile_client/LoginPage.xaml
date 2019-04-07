@@ -11,7 +11,7 @@
             </StackLayout>
             <StackLayout RelativeLayout.WidthConstraint= "{ConstraintExpression Type=RelativeToParent,Property=Width}" Orientation="Vertical" HorizontalOptions="FillAndExpand" 
                         RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width, Factor=0, Constant=0}" 
-                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height, Factor=0.55, Constant=0}">
+                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height, Factor=0.35, Constant=0}">
                 <Entry x:Name="student_id" Placeholder="Nr. indeksu" Completed="NextEntry" ReturnType="Next"/>
                 <Entry x:Name="password" IsPassword="True" Placeholder="Hasło" Completed="LoginBtn_Clicked" ReturnType="Done"/>
                 <Button x:Name="loginBtn" Text="Zaloguj" Clicked="LoginBtn_Clicked"/>
