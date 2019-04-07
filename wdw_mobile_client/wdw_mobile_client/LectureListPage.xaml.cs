@@ -23,20 +23,23 @@ namespace wdw_mobile_client
             InitializeComponent();
             student = stud;
             activityIndicator = downloadIndicator;
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            Navigation.PopModalAsync();
-            activityIndicator.IsRunning = true;
 
             listView = LecturesList;
 
             httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Authorization  = new AuthenticationHeaderValue("Bearer", student.token);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", student.token);
 
+            activityIndicator.IsRunning = true;
             downloadData();
+
+            listView.RefreshCommand = new Command(() => {
+                downloadData();
+            });
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
         }
 
         public async void downloadData()
@@ -45,14 +48,19 @@ namespace wdw_mobile_client
             string lecturesJson = await json.Content.ReadAsStringAsync();
             lectures = JsonConvert.DeserializeObject<List<Lecture>>(lecturesJson);
             listView.ItemsSource = lectures;
-            //downloadIndicator.IsRunning = false;
+            listView.IsRefreshing = false;
+            downloadIndicator.IsRunning = false;
         }
 
         private async void LecturesList_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             Lecture lecture = (Lecture) e.Item;
-            //await Navigation.PushAsync(new LecturePage(lecture));
-            await DisplayAlert("Test", lecture.name, "OK");
+            await LoginPage.page.PushAsync(new LecturePage(lecture));
+        }
+
+        private void LogoutBtn_Clicked(object sender, EventArgs e)
+        {
+            App.Current.MainPage = new LoginPage();
         }
     }
 }

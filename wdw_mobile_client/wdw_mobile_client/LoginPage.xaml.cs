@@ -13,14 +13,11 @@ namespace wdw_mobile_client
 	public partial class LoginPage : ContentPage
 	{
         private bool isConnected = false;
+        private bool loggedIn = false;
         private HttpClient _client;
         public Student student;
         private ActivityIndicator activityIndicator;
-
-        protected override bool OnBackButtonPressed()
-        {
-            return true;
-        }
+        public static NavigationPage page;
 
         public LoginPage ()
 		{
@@ -39,9 +36,10 @@ namespace wdw_mobile_client
 
         private async void LoginBtn_Clicked(object sender, EventArgs e)
         {
-            indicator.IsRunning = true;
-            string id = "developer";//student_id.Text;
-            string pass = "developer";//password.Text;
+            string id = student_id.Text;
+            string pass = password.Text;
+            //string id = "developer";
+            //string pass = "developer";
 
             string jsonString = $"{{ \"username\":\"{id}\", \"password\":\"{pass}\" }}";
 
@@ -50,11 +48,15 @@ namespace wdw_mobile_client
                 student_id.IsEnabled = false;
                 password.IsEnabled = false;
                 await getToken(jsonString);
-                await Navigation.PushModalAsync(new LectureListPage(student));
+                if (loggedIn)
+                {
+                    page = new NavigationPage(new LectureListPage(student));
+                    App.Current.MainPage = page;
+                }
             }
             else
             {
-                await DisplayAlert("Alert", "No connection to internet", "OK");
+                await DisplayAlert("Powiadomienie", "Brak połączenia z internetem.", "OK");
             }
         }
 
@@ -74,11 +76,33 @@ namespace wdw_mobile_client
 
         public async Task getToken(dynamic jsonString)
         {
-            var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PostAsync("http://apiwdw.azurewebsites.net/login_check", stringContent);
-            string responseJson = await response.Content.ReadAsStringAsync();
-            student = JsonConvert.DeserializeObject<Student>(responseJson);
-            //Console.WriteLine("This is the token: " + student.token);
+            indicator.IsRunning = true;
+
+            try
+            {
+                var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _client.PostAsync("http://apiwdw.azurewebsites.net/login_check", stringContent);
+                response.EnsureSuccessStatusCode();
+                string responseJson = await response.Content.ReadAsStringAsync();
+                student = JsonConvert.DeserializeObject<Student>(responseJson);
+                loggedIn = true;
+                //Console.WriteLine("This is the token: " + student.token);
+            }
+            catch(HttpRequestException e)
+            {
+                await DisplayAlert("Błąd", "Niepoprawny nr. indeksu lub hasło.", "OK");
+                Console.WriteLine("Wrong id or password! \n" + e);
+                loginBtn.IsEnabled = true;
+                student_id.IsEnabled = true;
+                password.IsEnabled = true;
+            }
+
+            indicator.IsRunning = false;
+        }
+
+        private void NextEntry(object sender, EventArgs e)
+        {
+            password.Focus();
         }
     }
 }

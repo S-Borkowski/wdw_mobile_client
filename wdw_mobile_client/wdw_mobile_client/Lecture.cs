@@ -4,7 +4,7 @@ using System.Text;
 
 namespace wdw_mobile_client
 {
-    class Lecture
+    public class Lecture
     {
         public string name { get; set; }
         public string lecturer { get; set; }
