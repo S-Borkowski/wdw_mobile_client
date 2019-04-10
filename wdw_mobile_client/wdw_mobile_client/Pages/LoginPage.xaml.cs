@@ -12,64 +12,73 @@ namespace wdw_mobile_client
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class LoginPage : ContentPage
 	{
-        private bool isConnected = false;
+        private bool? isConnected = null;
         private bool loggedIn = false;
         private HttpClient _client;
-        public Student student;
+        public User student;
         private ActivityIndicator activityIndicator;
         public static NavigationPage page;
+        public DateTimeOffset startTime;
+        Task connection;
 
         public LoginPage ()
 		{
 			InitializeComponent ();
             _client = new HttpClient();
+            activityIndicator = indicator;
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
 
-            await hasConnection();
-
-            activityIndicator = indicator;
+            connection = hasConnection();
         }
 
         private async void LoginBtn_Clicked(object sender, EventArgs e)
         {
-            string id = student_id.Text;
-            string pass = password.Text;
-            //string id = "developer";
-            //string pass = "developer";
+            loginBtn.IsEnabled = false;
+            //string id = student_id.Text;
+            //string pass = password.Text;
+            string id = "developer";
+            string pass = "developer";
 
             string jsonString = $"{{ \"username\":\"{id}\", \"password\":\"{pass}\" }}";
 
-            if (isConnected) {
-                loginBtn.IsEnabled = false;
-                student_id.IsEnabled = false;
-                password.IsEnabled = false;
-                await getToken(jsonString);
-                if (loggedIn)
+            DateTimeOffset startTime = DateTimeOffset.Now;
+
+            while (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds < 10000 && isConnected != false)
+            {
+                if (connection.IsCompleted)
                 {
-                    page = new NavigationPage(new LectureListPage(student));
-                    App.Current.MainPage = page;
+                    student_id.IsEnabled = false;
+                    password.IsEnabled = false;
+                    await getToken(jsonString);
+                    if (loggedIn)
+                    {
+                        page = new NavigationPage(new LectureListPage(student));
+                        App.Current.MainPage = page;
+                    }
                 }
             }
-            else
-            {
-                await DisplayAlert("Powiadomienie", "Brak połączenia z internetem.", "OK");
-            }
+            loginBtn.IsEnabled = true;
+            await DisplayAlert("Powiadomienie", "Brak połączenia z internetem.", "OK");
         }
 
         public async Task hasConnection()
         {
             try {
-                HttpResponseMessage response = await _client.GetAsync("http://apiwdw.azurewebsites.net/");
-                response.EnsureSuccessStatusCode();
+                HttpResponseMessage response;
+                using (response = await _client.GetAsync("http://apiwdw.azurewebsites.net/"))
+                {
+                    response.EnsureSuccessStatusCode();
+                }
                 isConnected = true;
                 Console.WriteLine("Connected!");
             }
-            catch(HttpRequestException e)
+            catch(Exception e)
             {
+                isConnected = false;
                 Console.WriteLine("No connection! \n" + e);
             }
         }
@@ -81,10 +90,13 @@ namespace wdw_mobile_client
             try
             {
                 var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _client.PostAsync("http://apiwdw.azurewebsites.net/login_check", stringContent);
-                response.EnsureSuccessStatusCode();
-                string responseJson = await response.Content.ReadAsStringAsync();
-                student = JsonConvert.DeserializeObject<Student>(responseJson);
+                HttpResponseMessage response;
+                using (response = await _client.PostAsync("http://apiwdw.azurewebsites.net/login_check", stringContent))
+                {
+                    response.EnsureSuccessStatusCode();
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    student = JsonConvert.DeserializeObject<User>(responseJson);
+                }
                 loggedIn = true;
                 //Console.WriteLine("This is the token: " + student.token);
             }
@@ -95,6 +107,10 @@ namespace wdw_mobile_client
                 loginBtn.IsEnabled = true;
                 student_id.IsEnabled = true;
                 password.IsEnabled = true;
+            }
+            catch (JsonReaderException e)
+            {
+                Console.WriteLine("Json error! \n" + e);
             }
 
             indicator.IsRunning = false;

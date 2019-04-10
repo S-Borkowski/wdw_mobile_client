@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="wdw_mobile_client.LectureListPage"
-             Title="Dostępne ECTS: 22">
+             x:Class="wdw_mobile_client.LectureListPage">
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name="logoutBtn" Text="Wyloguj" Clicked="LogoutBtn_Clicked"/>
     </ContentPage.ToolbarItems>
@@ -32,7 +31,7 @@
                                     </Grid.RowDefinitions>
 
                                     <Label
-                                            BackgroundColor="LightBlue" 
+                                            BackgroundColor="{Binding color}"
                                             Grid.ColumnSpan="5"
                                             Grid.Row="0" 
                                             Text="{Binding name}" 
