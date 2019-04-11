@@ -3,10 +3,41 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="wdw_mobile_client.LecturePage">
     <ContentPage.Content>
-        <StackLayout>
-            <Label x:Name="label"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
+        <RelativeLayout>
+            <StackLayout RelativeLayout.WidthConstraint= "{ConstraintExpression Type=RelativeToParent,Property=Width}" Orientation="Vertical" HorizontalOptions="FillAndExpand" 
+                        RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent,Property=Width, Factor=0, Constant=0}" 
+                        RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent,Property=Height, Factor=0.35, Constant=0}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Label 
+                        x:Name="label" 
+                        Grid.Row="0"
+                        Grid.ColumnSpan="2"
+                        VerticalOptions="Center" 
+                        HorizontalOptions="Center" />
+
+                    <Button 
+                        x:Name="enroll" 
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Text="Zapisz się"/>
+
+                    <Button 
+                        x:Name="disenroll" 
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Text="Wypisz się"/>
+                </Grid>
+            </StackLayout>
+        </RelativeLayout>
     </ContentPage.Content>
 </ContentPage>

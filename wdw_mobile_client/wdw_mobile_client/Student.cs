@@ -16,5 +16,6 @@ namespace wdw_mobile_client
         public string email { get; set; }
         public string[] lectures { get; set; }
         public string[] specialisations { get; set; }
+        public int ects { get; set; }
     }
 }

@@ -18,7 +18,23 @@ namespace wdw_mobile_client
 		{
 			InitializeComponent ();
             lecture = lect;
-            label.Text = $"This is {lecture.name} lecture page.";
-		}
+            label.Text = $"You can sign - {lecture.isSigned}.";
+
+            if(lecture.isSigned == null)
+            {
+                enroll.IsEnabled = true;
+                disenroll.IsEnabled = false;
+            }
+            else if(lecture.isSigned == true)
+            {
+                enroll.IsEnabled = false;
+                disenroll.IsEnabled = true;
+            }
+            else
+            {
+                enroll.IsEnabled = false;
+                disenroll.IsEnabled = false;
+            }
+        }
 	}
 }

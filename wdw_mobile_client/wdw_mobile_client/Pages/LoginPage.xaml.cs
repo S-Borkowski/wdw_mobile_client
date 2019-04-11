@@ -49,11 +49,14 @@ namespace wdw_mobile_client
 
             while (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds < 10000 && isConnected != false)
             {
+                await connection;
                 if (connection.IsCompleted)
                 {
                     student_id.IsEnabled = false;
                     password.IsEnabled = false;
+                    indicator.IsRunning = true;
                     await getToken(jsonString);
+                    indicator.IsRunning = false;
                     if (loggedIn)
                     {
                         page = new NavigationPage(new LectureListPage(student));
@@ -85,8 +88,6 @@ namespace wdw_mobile_client
 
         public async Task getToken(dynamic jsonString)
         {
-            indicator.IsRunning = true;
-
             try
             {
                 var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -112,8 +113,6 @@ namespace wdw_mobile_client
             {
                 Console.WriteLine("Json error! \n" + e);
             }
-
-            indicator.IsRunning = false;
         }
 
         private void NextEntry(object sender, EventArgs e)
