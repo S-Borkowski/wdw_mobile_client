@@ -28,7 +28,7 @@ namespace wdw_mobile_client
             activityIndicator = indicator;
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
@@ -47,7 +47,7 @@ namespace wdw_mobile_client
 
             DateTimeOffset startTime = DateTimeOffset.Now;
 
-            while (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds < 10000 && isConnected != false)
+            while (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds < 30000 && isConnected != false)
             {
                 await connection;
                 if (connection.IsCompleted)
@@ -61,6 +61,7 @@ namespace wdw_mobile_client
                     {
                         page = new NavigationPage(new LectureListPage(student));
                         App.Current.MainPage = page;
+                        return;
                     }
                 }
             }
@@ -109,7 +110,7 @@ namespace wdw_mobile_client
                 student_id.IsEnabled = true;
                 password.IsEnabled = true;
             }
-            catch (JsonReaderException e)
+            catch(JsonReaderException e)
             {
                 Console.WriteLine("Json error! \n" + e);
             }

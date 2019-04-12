@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace wdw_mobile_client
 {
     public class Lecture
     {
-        public int idLecture { get; set; }
+        public int id { get; set; }
         public string name { get; set; }
         public string lecturer { get; set; }
         public int ects { get; set; }
-        public string aditorium { get; set; }
+        public string auditorium { get; set; }
         public string weekday { get; set; }
         public string week { get; set; }
         public string hour { get; set; }
@@ -27,25 +25,20 @@ namespace wdw_mobile_client
         {
             get
             {
-                if (Array.IndexOf(LectureListPage.student.lectures, $"/lectures/{idLecture}") > -1)
+                if (Array.IndexOf(LectureListPage.student.lectures, $"/lectures/{id}") > -1)
                 {
-                    Heading = "Enrolled";
                     return "#2196f3"; //blue
-
                 }
-                else if (LectureListPage.student.ects == 0)
+                else if (LectureListPage.enrollment.availableEcts == 0)
                 {
-                    Heading = "Unavailable";
                     return "#757575"; //gray
                 }
                 else if (freeSlots != 0)
                 {
-                    Heading = "Available";
                     return "#43a047"; //green
                 }
                 else
                 {
-                    Heading = "Full";
                     return "#d32f2f"; //red
                 }
             }
@@ -54,32 +47,32 @@ namespace wdw_mobile_client
                 color = value;
             }
         }
-        public string Heading
-        {
-            get
-            {
-                if (color == "#2196f3") //blue
-                {
-                    return "Enrolled";
-                }
-                else if (color == "#757575") //gray
-                {
-                    return "Unavailable";
-                }
-                else if (color == "#43a047") //green
-                {
-                    return "Available";
-                }
-                else
-                {
-                    return "Full";
-                }
-            }
-            set
-            {
-                Heading = value;
-            }
-        }
+        //public string heading
+        //{
+        //    get
+        //    {
+        //        if (color == "#2196f3") //blue
+        //        {
+        //            return "enrolled";
+        //        }
+        //        else if (color == "#757575") //gray
+        //        {
+        //            return "unavailable";
+        //        }
+        //        else if (color == "#43a047") //green
+        //        {
+        //            return "available";
+        //        }
+        //        else
+        //        {
+        //            return "full";
+        //        }
+        //    }
+        //    set
+        //    {
+        //        heading = value;
+        //    }
+        //}
         public bool? isSigned
         {
             get 
