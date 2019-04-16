@@ -47,32 +47,6 @@ namespace wdw_mobile_client
                 color = value;
             }
         }
-        //public string heading
-        //{
-        //    get
-        //    {
-        //        if (color == "#2196f3") //blue
-        //        {
-        //            return "enrolled";
-        //        }
-        //        else if (color == "#757575") //gray
-        //        {
-        //            return "unavailable";
-        //        }
-        //        else if (color == "#43a047") //green
-        //        {
-        //            return "available";
-        //        }
-        //        else
-        //        {
-        //            return "full";
-        //        }
-        //    }
-        //    set
-        //    {
-        //        heading = value;
-        //    }
-        //}
         public bool? isSigned
         {
             get 
@@ -81,13 +55,13 @@ namespace wdw_mobile_client
                 {
                     return true; //can disenroll
                 }
-                else if (color == "#757575") //gray
-                {
-                    return false; //cant enroll or disenroll
-                }
                 else if (color == "#43a047") //green
                 {
                     return null; //can enroll
+                }
+                else if (color == "#757575") //gray
+                {
+                    return false; //cant enroll or disenroll
                 }
                 else
                 {

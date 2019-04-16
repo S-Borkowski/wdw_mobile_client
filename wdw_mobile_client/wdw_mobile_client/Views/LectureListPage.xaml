@@ -11,7 +11,8 @@
                          RelativeLayout.HeightConstraint= "{ConstraintExpression Type=RelativeToParent,Property=Height}"
                          Orientation="Vertical" VerticalOptions="CenterAndExpand">
                 <ListView x:Name="LecturesList" SelectionMode="None" RowHeight="80" ItemTapped="LecturesList_ItemTapped" 
-                          IsPullToRefreshEnabled="True" BackgroundColor="White">
+                          IsPullToRefreshEnabled="True" BackgroundColor="White" IsGroupingEnabled="true" 
+                          GroupDisplayBinding="{Binding longName}" GroupShortNameBinding="{Binding shortName}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>

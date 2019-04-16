@@ -23,19 +23,21 @@
                         Grid.Row="0"
                         Grid.ColumnSpan="2"
                         VerticalOptions="Center" 
-                        HorizontalOptions="Center" />
+                        HorizontalOptions="Center"/>
 
                     <Button 
                         x:Name="enroll" 
                         Grid.Row="1"
                         Grid.Column="0"
-                        Text="Zapisz się"/>
+                        Text="Zapisz się"
+                        Pressed="Enroll_Pressed"/>
 
                     <Button 
                         x:Name="disenroll" 
                         Grid.Row="1"
                         Grid.Column="1"
-                        Text="Wypisz się"/>
+                        Text="Wypisz się"
+                        Pressed="Disenroll_Pressed"/>
                 </Grid>
             </StackLayout>
         </RelativeLayout>
