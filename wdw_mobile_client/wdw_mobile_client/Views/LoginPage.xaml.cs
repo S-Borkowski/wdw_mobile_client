@@ -39,10 +39,10 @@ namespace wdw_mobile_client
         private async void LoginBtn_Clicked(object sender, EventArgs e)
         {
             loginBtn.IsEnabled = false;
-            //string id = student_id.Text;
-            //string pass = password.Text;
-            string id = "developer";
-            string pass = "developer";
+            string id = student_id.Text;
+            string pass = password.Text;
+            //string id = "developer";
+            //string pass = "developer";
 
             jsonString = $"{{ \"username\":\"{id}\", \"password\":\"{pass}\" }}";
 
