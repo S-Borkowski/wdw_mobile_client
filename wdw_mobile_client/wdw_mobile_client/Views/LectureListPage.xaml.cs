@@ -3,6 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -16,6 +17,7 @@ namespace wdw_mobile_client
         private ActivityIndicator activityIndicator;
         private HttpClient httpClient;
         private User user;
+        private string jsonString;
         private Lecture[] lectureList;
         public static Enrollment enrollment;
         public static Student student;
@@ -25,15 +27,18 @@ namespace wdw_mobile_client
         public static GroupLectures fullGroup = new GroupLectures() { longName = "Pełne", shortName = "P" };
         private ObservableCollection<GroupLectures> grouped { get; set; }
 
-        public LectureListPage(User usr)
+        public LectureListPage(User usr, string json)
         {
             InitializeComponent();
+            jsonString = json;
             user = usr;
-            enrollment = user.enrollments[0];
-            lectureList = enrollment.lectures;
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
             activityIndicator = downloadIndicator;
             listView = LecturesList;
-            Title = $"Dostępne ECTS: {enrollment.availableEcts}";
 
             grouped = new ObservableCollection<GroupLectures>();
 
@@ -42,7 +47,6 @@ namespace wdw_mobile_client
 
             activityIndicator.IsRunning = true;
             downloadData();
-
             listView.RefreshCommand = new Command(() => {
                 downloadLectures();
             });
@@ -58,7 +62,7 @@ namespace wdw_mobile_client
             try
             {
                 HttpResponseMessage json;
-                using (json = await httpClient.GetAsync($"http://apiwdw.azurewebsites.net{user.user}"))
+                using (json = await httpClient.GetAsync($"http://wdw.azurewebsites.net{user.user}"))
                 {
                     json.EnsureSuccessStatusCode();
                     string studentJson = await json.Content.ReadAsStringAsync();
@@ -74,16 +78,32 @@ namespace wdw_mobile_client
                 Console.WriteLine("Json error! \n" + e);
             }
 
-            await groupLectures();
+            await downloadLectures();
             downloadIndicator.IsRunning = false;
         }
 
-        private async void downloadLectures()
+        private async Task downloadLectures()
         {
             try
             {
+                var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                HttpResponseMessage response;
+                using (response = await httpClient.PostAsync("http://wdw.azurewebsites.net/login_check", stringContent))
+                {
+                    response.EnsureSuccessStatusCode();
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    user = JsonConvert.DeserializeObject<User>(responseJson);
+                }
+            }
+            catch (JsonReaderException e)
+            {
+                Console.WriteLine("Json error! \n" + e);
+            }
+
+            try
+            {
                 HttpResponseMessage json;
-                using (json = await httpClient.GetAsync("http://apiwdw.azurewebsites.net/enrollments/1/lectures"))
+                using (json = await httpClient.GetAsync("http://wdw.azurewebsites.net/enrollments/1/lectures"))
                 {
                     json.EnsureSuccessStatusCode();
                     string lecturesJson = await json.Content.ReadAsStringAsync();
@@ -99,11 +119,14 @@ namespace wdw_mobile_client
                 Console.WriteLine("Json error! \n" + e);
             }
 
-            await groupLectures();
+            groupLectures();
+            enrollment = user.enrollments[0];
+            lectureList = enrollment.lectures;
+            Title = $"Dostępne ECTS: {enrollment.availableEcts}";
             listView.IsRefreshing = false;
         }
 
-        private async Task groupLectures()
+        private void groupLectures()
         {
             grouped.Clear(); enrolledGroup.Clear(); availableGroup.Clear(); unavailableGroup.Clear(); fullGroup.Clear();
             for (int i = 0; i < lectureList.Length; i++)

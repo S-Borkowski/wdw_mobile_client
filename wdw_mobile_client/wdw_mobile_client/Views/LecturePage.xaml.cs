@@ -23,7 +23,7 @@ namespace wdw_mobile_client
             httpClient = client;
             student = stud;
             lecture = lect;
-            label.Text = $"You can't sign - {lecture.isSigned}.";
+            label.Text = $"{lecture.name}.";
 
             if(lecture.isSigned == null)
             {
@@ -49,14 +49,14 @@ namespace wdw_mobile_client
                 HttpResponseMessage response;
                 var jsonString = $"{{ \"idUser\": {student.id}, \"idLecture\": {lecture.id}, \"idEnrollment\": 1 }}";
                 var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-                using (response = await httpClient.PostAsync("http://apiwdw.azurewebsites.net/lectures/subscribe", stringContent))
+                using (response = await httpClient.PostAsync("http://wdw.azurewebsites.net/lectures/subscribe", stringContent))
                 {
                     response.EnsureSuccessStatusCode();
                 }
-                lecture.isSigned = true;
                 enroll.IsEnabled = false;
                 disenroll.IsEnabled = true;
                 Console.WriteLine("In queue!");
+                await LoginPage.page.PopAsync();
             }
             catch (Exception exc)
             {
@@ -71,14 +71,17 @@ namespace wdw_mobile_client
                 HttpResponseMessage response;
                 var jsonString = $"{{ \"idUser\": {student.id}, \"idLecture\": {lecture.id} }}";
                 var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-                using (response = await httpClient.PostAsync("http://apiwdw.azurewebsites.net/lectures/unsubscribe", stringContent))
+                Console.WriteLine("1!");
+                using (response = await httpClient.PostAsync("http://wdw.azurewebsites.net/lectures/unsubscribe", stringContent))
                 {
+                    Console.WriteLine("2!");
                     response.EnsureSuccessStatusCode();
+                    Console.WriteLine("3!");
                 }
-                lecture.isSigned = null;
                 enroll.IsEnabled = true;
                 disenroll.IsEnabled = false;
                 Console.WriteLine("Unsubscribed!");
+                await LoginPage.page.PopAsync();
             }
             catch (Exception exc)
             {

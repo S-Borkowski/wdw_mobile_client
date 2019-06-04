@@ -19,6 +19,7 @@ namespace wdw_mobile_client
         private ActivityIndicator activityIndicator;
         public static NavigationPage page;
         public DateTimeOffset startTime;
+        public string jsonString;
         Task connection;
 
         public LoginPage ()
@@ -28,7 +29,7 @@ namespace wdw_mobile_client
             activityIndicator = indicator;
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
 
@@ -43,7 +44,7 @@ namespace wdw_mobile_client
             string id = "developer";
             string pass = "developer";
 
-            string jsonString = $"{{ \"username\":\"{id}\", \"password\":\"{pass}\" }}";
+            jsonString = $"{{ \"username\":\"{id}\", \"password\":\"{pass}\" }}";
 
             DateTimeOffset startTime = DateTimeOffset.Now;
 
@@ -59,7 +60,7 @@ namespace wdw_mobile_client
                     indicator.IsRunning = false;
                     if (loggedIn)
                     {
-                        page = new NavigationPage(new LectureListPage(student));
+                        page = new NavigationPage(new LectureListPage(student, jsonString));
                         App.Current.MainPage = page;
                         return;
                     }
@@ -73,7 +74,7 @@ namespace wdw_mobile_client
         {
             try {
                 HttpResponseMessage response;
-                using (response = await _client.GetAsync("http://apiwdw.azurewebsites.net/"))
+                using (response = await _client.GetAsync("http://wdw.azurewebsites.net/"))
                 {
                     response.EnsureSuccessStatusCode();
                 }
@@ -93,7 +94,7 @@ namespace wdw_mobile_client
             {
                 var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
                 HttpResponseMessage response;
-                using (response = await _client.PostAsync("http://apiwdw.azurewebsites.net/login_check", stringContent))
+                using (response = await _client.PostAsync("http://wdw.azurewebsites.net/login_check", stringContent))
                 {
                     response.EnsureSuccessStatusCode();
                     string responseJson = await response.Content.ReadAsStringAsync();
