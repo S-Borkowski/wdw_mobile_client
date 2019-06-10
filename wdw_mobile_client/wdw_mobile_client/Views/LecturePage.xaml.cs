@@ -58,9 +58,10 @@ namespace wdw_mobile_client
                 Console.WriteLine("In queue!");
                 await LoginPage.page.PopAsync();
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                Console.WriteLine("Can't sign! \n" + exc);
+                Console.WriteLine("No connection! \n" + ex);
+                await DisplayAlert("Powiadomienie", "Brak połączenia z internetem.", "OK");
             }
         }
 
@@ -83,9 +84,10 @@ namespace wdw_mobile_client
                 Console.WriteLine("Unsubscribed!");
                 await LoginPage.page.PopAsync();
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                Console.WriteLine("Can't unsubscribe! \n" + exc);
+                Console.WriteLine("No connection! \n" + ex);
+                await DisplayAlert("Powiadomienie", "Brak połączenia z internetem.", "OK");
             }
         }
     }

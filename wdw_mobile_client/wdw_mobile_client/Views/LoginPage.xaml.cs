@@ -38,6 +38,7 @@ namespace wdw_mobile_client
 
         private async void LoginBtn_Clicked(object sender, EventArgs e)
         {
+            if (isConnected == false) isConnected = null;
             loginBtn.IsEnabled = false;
             string id = student_id.Text;
             string pass = password.Text;
@@ -51,23 +52,22 @@ namespace wdw_mobile_client
             while (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds < 30000 && isConnected != false)
             {
                 await connection;
-                if (connection.IsCompleted)
+                student_id.IsEnabled = false;
+                password.IsEnabled = false;
+                indicator.IsRunning = true;
+                await getToken(jsonString);
+                indicator.IsRunning = false;
+                if (loggedIn == false) break;
+                else
                 {
-                    student_id.IsEnabled = false;
-                    password.IsEnabled = false;
-                    indicator.IsRunning = true;
-                    await getToken(jsonString);
-                    indicator.IsRunning = false;
-                    if (loggedIn)
-                    {
-                        page = new NavigationPage(new LectureListPage(student, jsonString));
-                        App.Current.MainPage = page;
-                        return;
-                    }
+                    page = new NavigationPage(new LectureListPage(student, jsonString));
+                    App.Current.MainPage = page;
+                    return;
                 }
             }
             loginBtn.IsEnabled = true;
-            await DisplayAlert("Powiadomienie", "Brak połączenia z internetem.", "OK");
+            student_id.IsEnabled = true;
+            password.IsEnabled = true;
         }
 
         public async Task hasConnection()
@@ -85,6 +85,7 @@ namespace wdw_mobile_client
             {
                 isConnected = false;
                 Console.WriteLine("No connection! \n" + e);
+                await DisplayAlert("Powiadomienie", "Brak połączenia z internetem.", "OK");
             }
         }
 
@@ -114,6 +115,12 @@ namespace wdw_mobile_client
             catch(JsonReaderException e)
             {
                 Console.WriteLine("Json error! \n" + e);
+            }
+            catch (Exception e)
+            {
+                isConnected = false;
+                Console.WriteLine("No connection! \n" + e);
+                await DisplayAlert("Powiadomienie", "Brak połączenia z internetem.", "OK");
             }
         }
 

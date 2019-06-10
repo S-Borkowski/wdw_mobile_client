@@ -77,6 +77,10 @@ namespace wdw_mobile_client
             {
                 Console.WriteLine("Json error! \n" + e);
             }
+            catch (Exception e)
+            {
+                Console.WriteLine("No connection! \n" + e);
+            }
 
             await downloadLectures();
             downloadIndicator.IsRunning = false;
@@ -99,6 +103,11 @@ namespace wdw_mobile_client
             {
                 Console.WriteLine("Json error! \n" + e);
             }
+            catch (Exception e)
+            {
+                Console.WriteLine("No connection! \n" + e);
+                await DisplayAlert("Powiadomienie", "Brak połączenia z internetem.", "OK");
+            }
 
             try
             {
@@ -117,6 +126,10 @@ namespace wdw_mobile_client
             catch (JsonReaderException e)
             {
                 Console.WriteLine("Json error! \n" + e);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("No connection! \n" + e);
             }
 
             groupLectures();
